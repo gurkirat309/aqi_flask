@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>City AQI Dashboard</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>City</th>
+      <th>Latest CSV AQI</th>
+      <th>Live AQI (pm2.5->AQI)</th>
+      <th>OpenWeather Index</th>
+      <th>Category</th>
+      <th>Suggestion</th>
+      <th>Predict</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td>{{ r.city }}</td>
+      <td>{{ '%.0f'|format(r.csv_aqi) if r.csv_aqi is not none else 'N/A' }}</td>
+      <td>{{ '%.0f'|format(r.live.aqi_estimate) if r.live else 'N/A' }}</td>
+      <td>{{ r.live.ow_index if r.live else 'N/A' }}</td>
+      <td>{{ r.category if r.category else '—' }}</td>
+      <td style="max-width:320px">{{ r.advice if r.advice else '—' }}</td>
+      <td><a class="btn btn-sm btn-primary" href="{{ url_for('predict_city', city=r.city) }}">View</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ city }} — Next-day AQI: {{ '%.1f'|format(next_day) }} <small class="text-muted">({{ source }})</small></h2>
+<div class="mb-3">
+  <span class="badge bg-info text-dark">{{ category }}</span>
+  <span class="ms-2">{{ advice }}</span>
+  {% if email_sent %}
+    <span class="badge bg-success ms-2">Email sent to {{ email_to }}</span>
+  {% endif %}
+  {% if email_sent is defined and email_sent == False and email_to %}
+    <span class="badge bg-danger ms-2">Failed to send to {{ email_to }}</span>
+  {% endif %}
+</div>
+<form method="post" class="row gy-2 gx-3 align-items-center mb-4">
+  <div class="col-auto">
+    <input type="email" class="form-control" name="email" placeholder="Enter your email to get advice" required>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-primary" type="submit">Email me this advice</button>
+  </div>
+</form>
+{% if email_error %}
+<div class="alert alert-danger py-2">
+  Failed to send email: {{ email_error }}
+  <div class="small text-muted">Check SMTP_HOST/PORT/USER/PASS in .env and use an app password for Gmail.</div>
+</div>
+{% endif %}
+<canvas id="chart" height="120"></canvas>
+<ul>
+  {% for v in trend %}
+  <li>{{ '%.1f'|format(v) }}</li>
+  {% endfor %}
+</ul>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  const canvas = document.getElementById('chart');
+  if (!canvas || !window.Chart) return;
+  const ctx = canvas.getContext('2d');
+  const forecastLabels = {{ labels | tojson | safe }};
+  const forecastData = {{ trend | tojson | safe }};
+  const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+  gradient.addColorStop(0, 'rgba(54,162,235,0.35)');
+  gradient.addColorStop(1, 'rgba(54,162,235,0.02)');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: forecastLabels,
+      datasets: [{
+        label: '7-day forecast',
+        data: forecastData,
+        borderColor: 'rgba(54,162,235,1)',
+        backgroundColor: gradient,
+        fill: true,
+        tension: 0.25,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        pointBackgroundColor: 'rgba(54,162,235,1)'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        tooltip: { enabled: true },
+        title: { display: true, text: '7-day AQI Forecast' }
+      },
+      scales: {
+        y: { beginAtZero: false, grid: { color: 'rgba(0,0,0,0.05)' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

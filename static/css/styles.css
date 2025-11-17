@@ -1,0 +1,2 @@
+body { padding-bottom: 40px; }
+.table td, .table th { vertical-align: middle; }

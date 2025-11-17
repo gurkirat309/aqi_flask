@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Predict Next-day AQI</h2>
+<form method="post" class="row gy-2 gx-3 align-items-center">
+  <div class="col-auto">
+    <select class="form-select" name="city">
+      {% for c in cities %}
+      <option value="{{ c }}">{{ c }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary" type="submit">Predict</button>
+  </div>
+</form>
+{% endblock %}
