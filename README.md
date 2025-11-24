@@ -56,5 +56,4 @@ Run unit tests:
 ```bash
 pytest -q
 ```
-Gives back the email
 
