@@ -80,7 +80,7 @@ def main():
 
     logging.info(f"Training complete. Trained: {len(trained)}; Skipped: {len(skipped)}")
     if skipped:
-        logging.info("Skipped cities: " + ", ".join(skipped))
+        logging.info("Skipped cities are: " + ", ".join(skipped))
 
 
 if __name__ == "__main__":
